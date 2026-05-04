@@ -69,21 +69,28 @@ export async function analyzeCareerProfile(profile) {
   if (!apiKey) {
     return {
       ...fallbackAnalysis,
-      suggestions: [
-        ...fallbackAnalysis.suggestions,
+      courseSuggestions: [
+        ...fallbackAnalysis.courseSuggestions,
         'Add VITE_OPENAI_API_KEY in .env to enable live AI-generated analysis'
       ]
     };
   }
 
+  let finalModel = model;
+  const isOpenRouter = apiKey.startsWith('sk-or');
+  if (isOpenRouter && !finalModel.includes('/')) {
+    finalModel = `openai/${finalModel}`;
+  }
+
   const openai = new OpenAI({
     apiKey,
+    baseURL: isOpenRouter ? 'https://openrouter.ai/api/v1' : undefined,
     // For production, move this call to a Firebase Cloud Function or server API route.
     dangerouslyAllowBrowser: true
   });
 
   const response = await openai.chat.completions.create({
-    model,
+    model: finalModel,
     response_format: { type: 'json_object' },
     messages: [
       {
