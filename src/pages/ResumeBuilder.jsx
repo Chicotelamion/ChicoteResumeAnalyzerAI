@@ -6,15 +6,18 @@ import { saveResumeProfile } from '../services/firestoreService.js';
 
 const initialForm = {
   fullname: '',
-  degree: '',
-  course: '',
-  education: '',
-  technicalSkills: '',
-  programmingLanguages: '',
-  certifications: '',
-  experience: '',
-  projects: '',
-  careerInterest: ''
+  gradeLevel: '',
+  favoriteSubjects: '',
+  challengingSubjects: '',
+  hobbies: '',
+  strengths: '',
+  values: '',
+  workStyle: '',
+  courseInterest: '',
+  careerInterest: '',
+  goals: '',
+  guardianExpectations: '',
+  notes: ''
 };
 
 export default function ResumeBuilder() {
@@ -37,17 +40,17 @@ export default function ResumeBuilder() {
 
     const requiredFields = [
       'fullname',
-      'degree',
-      'education',
-      'technicalSkills',
-      'programmingLanguages',
-      'projects',
+      'gradeLevel',
+      'favoriteSubjects',
+      'hobbies',
+      'strengths',
+      'workStyle',
       'careerInterest'
     ];
     const hasMissingProfileFields = requiredFields.some((field) => !form[field].trim());
 
     if (!resumeFile && hasMissingProfileFields) {
-      setError('Complete the required career profile fields or upload a resume document.');
+      setError('Complete the required discovery profile fields or upload a guidance document.');
       setSaving(false);
       return;
     }
@@ -58,9 +61,9 @@ export default function ResumeBuilder() {
         fullname: form.fullname || currentUser.displayName || '',
         resumeFileName: resumeFile?.name || '',
         resumeFileUrl: '',
-        profileSource: resumeFile ? 'resume_upload' : 'manual_form'
+        profileSource: resumeFile ? 'document_upload' : 'student_discovery_form'
       });
-      setMessage('Resume profile saved successfully.');
+      setMessage('Student discovery profile saved successfully.');
       setTimeout(() => navigate('/analyze'), 700);
     } catch (err) {
       setError(err.message);
@@ -72,9 +75,9 @@ export default function ResumeBuilder() {
   return (
     <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-7">
-        <p className="text-sm font-semibold uppercase tracking-wide text-marine">Resume Builder</p>
-        <h1 className="mt-2 text-3xl font-bold">Create your career profile</h1>
-        <p className="mt-2 text-slate-600">Enter academic, technical, and career information for AI analysis.</p>
+        <p className="text-sm font-semibold uppercase tracking-wide text-marine">Discovery Profile</p>
+        <h1 className="mt-2 text-3xl font-bold">Tell us what you enjoy and how you work</h1>
+        <p className="mt-2 text-slate-600">For undecided students choosing a college course and possible future career path.</p>
       </div>
 
       <form className="card p-6" onSubmit={handleSubmit}>
@@ -87,56 +90,72 @@ export default function ResumeBuilder() {
             <input className="field" id="fullname" name="fullname" value={form.fullname} onChange={updateField} required={profileFieldsRequired} />
           </div>
           <div>
-            <label className="label" htmlFor="degree">Degree</label>
-            <input className="field" id="degree" name="degree" placeholder="BS Information Technology" value={form.degree} onChange={updateField} required={profileFieldsRequired} />
+            <label className="label" htmlFor="gradeLevel">Current grade level</label>
+            <input className="field" id="gradeLevel" name="gradeLevel" placeholder="Grade 12, senior high graduate, first year college" value={form.gradeLevel} onChange={updateField} required={profileFieldsRequired} />
           </div>
           <div>
-            <label className="label" htmlFor="course">Course or specialization</label>
-            <input className="field" id="course" name="course" placeholder="Web Development, Networking, Data Analytics" value={form.course} onChange={updateField} />
+            <label className="label" htmlFor="courseInterest">Courses you are considering</label>
+            <input className="field" id="courseInterest" name="courseInterest" placeholder="IT, Education, Nursing, Business, Criminology" value={form.courseInterest} onChange={updateField} />
           </div>
           <div>
-            <label className="label" htmlFor="careerInterest">Career interests</label>
-            <input className="field" id="careerInterest" name="careerInterest" placeholder="Software development, cybersecurity, support" value={form.careerInterest} onChange={updateField} required={profileFieldsRequired} />
+            <label className="label" htmlFor="careerInterest">Careers you are curious about</label>
+            <input className="field" id="careerInterest" name="careerInterest" placeholder="Office work, business, technology, healthcare, teaching" value={form.careerInterest} onChange={updateField} required={profileFieldsRequired} />
           </div>
         </div>
 
         <div className="mt-5 grid gap-5">
           <div>
-            <label className="label" htmlFor="education">Education details</label>
-            <textarea className="field min-h-24" id="education" name="education" value={form.education} onChange={updateField} required={profileFieldsRequired} />
+            <label className="label" htmlFor="favoriteSubjects">Favorite subjects</label>
+            <textarea className="field min-h-24" id="favoriteSubjects" name="favoriteSubjects" placeholder="Math, English, science, ICT, arts, business, social studies" value={form.favoriteSubjects} onChange={updateField} required={profileFieldsRequired} />
           </div>
           <div className="grid gap-5 md:grid-cols-2">
             <div>
-              <label className="label" htmlFor="technicalSkills">Technical skills</label>
-              <textarea className="field min-h-28" id="technicalSkills" name="technicalSkills" placeholder="React, Firebase, database design, UI design" value={form.technicalSkills} onChange={updateField} required={profileFieldsRequired} />
+              <label className="label" htmlFor="challengingSubjects">Subjects you find difficult</label>
+              <textarea className="field min-h-28" id="challengingSubjects" name="challengingSubjects" placeholder="Subjects or activities you want to avoid or improve" value={form.challengingSubjects} onChange={updateField} />
             </div>
             <div>
-              <label className="label" htmlFor="programmingLanguages">Programming languages</label>
-              <textarea className="field min-h-28" id="programmingLanguages" name="programmingLanguages" placeholder="JavaScript, Python, Java, SQL" value={form.programmingLanguages} onChange={updateField} required={profileFieldsRequired} />
+              <label className="label" htmlFor="hobbies">Hobbies and activities</label>
+              <textarea className="field min-h-28" id="hobbies" name="hobbies" placeholder="Helping people, drawing, selling, gaming, organizing, writing, building things" value={form.hobbies} onChange={updateField} required={profileFieldsRequired} />
             </div>
           </div>
           <div className="grid gap-5 md:grid-cols-2">
             <div>
-              <label className="label" htmlFor="certifications">Certifications</label>
-              <textarea className="field min-h-28" id="certifications" name="certifications" placeholder="Google IT Support, AWS Cloud Practitioner" value={form.certifications} onChange={updateField} />
+              <label className="label" htmlFor="strengths">Personal strengths</label>
+              <textarea className="field min-h-28" id="strengths" name="strengths" placeholder="Communication, creativity, patience, leadership, problem solving, attention to detail" value={form.strengths} onChange={updateField} required={profileFieldsRequired} />
             </div>
             <div>
-              <label className="label" htmlFor="experience">Internship or work experience</label>
-              <textarea className="field min-h-28" id="experience" name="experience" value={form.experience} onChange={updateField} />
+              <label className="label" htmlFor="workStyle">Preferred work style</label>
+              <textarea className="field min-h-28" id="workStyle" name="workStyle" placeholder="Team or solo, indoor or outdoor, routine or creative, people-facing or technical" value={form.workStyle} onChange={updateField} required={profileFieldsRequired} />
             </div>
           </div>
-          <div>
-            <label className="label" htmlFor="projects">Personal or academic projects</label>
-            <textarea className="field min-h-28" id="projects" name="projects" placeholder="Capstone apps, websites, mobile apps, network labs" value={form.projects} onChange={updateField} required={profileFieldsRequired} />
+          <div className="grid gap-5 md:grid-cols-2">
+            <div>
+              <label className="label" htmlFor="values">What matters to you in a future job</label>
+              <textarea className="field min-h-28" id="values" name="values" placeholder="Good salary, helping others, stability, creativity, travel, flexible schedule" value={form.values} onChange={updateField} />
+            </div>
+            <div>
+              <label className="label" htmlFor="goals">Life or college goals</label>
+              <textarea className="field min-h-28" id="goals" name="goals" placeholder="Finish college, support family, start a business, work abroad, become licensed" value={form.goals} onChange={updateField} />
+            </div>
+          </div>
+          <div className="grid gap-5 md:grid-cols-2">
+            <div>
+              <label className="label" htmlFor="guardianExpectations">Family or guardian expectations</label>
+              <textarea className="field min-h-24" id="guardianExpectations" name="guardianExpectations" placeholder="Optional: course suggestions, budget limits, school preference" value={form.guardianExpectations} onChange={updateField} />
+            </div>
+            <div>
+              <label className="label" htmlFor="notes">Other notes</label>
+              <textarea className="field min-h-24" id="notes" name="notes" placeholder="Anything else that may affect your course choice" value={form.notes} onChange={updateField} />
+            </div>
           </div>
 
           <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-5">
             <label className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-700" htmlFor="resumeFile">
               <UploadCloud size={19} />
-              Optional resume document
+              Optional student record or guidance document
             </label>
             <p className="mb-3 text-xs leading-5 text-slate-500">
-              Uploading a resume makes the career profile fields optional. The demo stores the file name with your profile.
+              Uploading a document makes the profile fields optional. The demo stores the file name with your profile.
             </p>
             <input
               className="block w-full text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-marine file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white"
@@ -147,7 +166,7 @@ export default function ResumeBuilder() {
             />
             {resumeFile && (
               <p className="mt-3 rounded-lg bg-mint/10 px-3 py-2 text-xs font-semibold text-marine">
-                Resume selected. Career profile fields are now optional.
+                Document selected. Discovery profile fields are now optional.
               </p>
             )}
           </div>
@@ -156,7 +175,7 @@ export default function ResumeBuilder() {
         <div className="mt-6 flex justify-end">
           <button className="btn-primary" disabled={saving}>
             <Save size={18} />
-            {saving ? 'Saving profile...' : 'Save Resume Profile'}
+            {saving ? 'Saving profile...' : 'Save Discovery Profile'}
           </button>
         </div>
       </form>

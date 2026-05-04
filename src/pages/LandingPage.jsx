@@ -2,10 +2,10 @@ import { ArrowRight, BarChart3, BrainCircuit, CheckCircle2, FileText, ShieldChec
 import { Link } from 'react-router-dom';
 
 const features = [
-  { icon: FileText, title: 'Resume Profile', text: 'Organize education, skills, projects, certifications, and experience in one place.' },
-  { icon: BrainCircuit, title: 'AI Career Analysis', text: 'Generate employability scoring, missing skill insights, and interview readiness guidance.' },
-  { icon: BarChart3, title: 'Job Recommendations', text: 'Receive five suitable IT roles and a practical growth roadmap.' },
-  { icon: ShieldCheck, title: 'Firebase Powered', text: 'Authentication, Firestore records, resume upload, and analysis history are included.' }
+  { icon: FileText, title: 'Student Profile', text: 'Capture favorite subjects, hobbies, strengths, values, work style, and course interests.' },
+  { icon: BrainCircuit, title: 'AI Guidance', text: 'Generate course suggestions, decision concerns, exploration advice, and direction scoring.' },
+  { icon: BarChart3, title: 'Career Paths', text: 'Discover future job families connected to the courses a student may take in college.' },
+  { icon: ShieldCheck, title: 'Saved Progress', text: 'Authentication, records, document name capture, and guidance history are included.' }
 ];
 
 export default function LandingPage() {
@@ -16,17 +16,17 @@ export default function LandingPage() {
           <div className="flex flex-col justify-center">
             <span className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-mint/30 bg-mint/10 px-3 py-1 text-sm font-semibold text-marine">
               <CheckCircle2 size={16} />
-              AI career guidance for IT students
+              AI guidance for undecided students
             </span>
             <h1 className="max-w-3xl text-4xl font-bold tracking-normal text-ink sm:text-5xl">
               CareerPath AI
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-              A complete resume analyzer and job recommendation assistant that helps students understand their readiness, improve their profile, and plan a practical path into the IT industry.
+              A college course and career discovery assistant that helps students compare interests, strengths, subjects, and possible future paths before choosing a course.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link className="btn-primary" to="/register">
-                Start Analysis
+                Start Guidance
                 <ArrowRight size={18} />
               </Link>
               <Link className="btn-secondary" to="/login">
@@ -39,7 +39,7 @@ export default function LandingPage() {
             <div className="rounded-lg bg-white p-5">
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div>
-                  <p className="text-sm font-semibold text-slate-500">Employability Score</p>
+                  <p className="text-sm font-semibold text-slate-500">Direction Clarity</p>
                   <p className="mt-1 text-4xl font-bold text-marine">86%</p>
                 </div>
                 <div className="grid h-14 w-14 place-items-center rounded-lg bg-coral/10 text-coral">
@@ -47,7 +47,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="mt-5 space-y-4">
-                {['Frontend Developer', 'QA Automation Trainee', 'Junior Web Developer', 'IT Support Specialist', 'Systems Analyst'].map((role, index) => (
+                {['BS Information Technology', 'BS Business Administration', 'BS Psychology', 'BS Education', 'BS Nursing'].map((role, index) => (
                   <div key={role}>
                     <div className="mb-1 flex items-center justify-between text-sm">
                       <span className="font-semibold text-slate-700">{index + 1}. {role}</span>

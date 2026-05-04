@@ -5,60 +5,62 @@ const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
 function buildPrompt(profile) {
   return `
-You are an expert HR recruiter and IT career consultant.
+You are an expert student career guidance counselor and college course adviser.
 
-Analyze this IT student/job seeker profile and provide:
+Analyze this undecided student profile and provide:
 
-1. Employability score from 0 to 100
-2. Main strengths
-3. Missing skills or weaknesses
-4. Resume improvement suggestions
-5. Interview readiness advice
-6. Top 5 suitable IT job roles
-7. Career growth roadmap
+1. Career direction clarity score from 0 to 100
+2. Main personal strengths
+3. Possible concerns, blind spots, or decision conflicts
+4. Top 5 recommended college courses or programs
+5. Practical career exploration advice
+6. Top 5 suitable future career paths or job families
+7. College and career discovery roadmap
 
 Profile Data:
 ${JSON.stringify(profile, null, 2)}
 
 Return result in JSON structured format with these exact keys:
-employabilityScore, strengths, weaknesses, suggestions, interviewAdvice, recommendedJobs, roadmap.
+directionScore, strengths, concerns, courseSuggestions, explorationAdvice, recommendedJobs, roadmap.
 Each list field must be an array of concise strings.
 `;
 }
 
 const fallbackAnalysis = {
-  employabilityScore: 74,
+  directionScore: 78,
   strengths: [
-    'Clear IT career interest and foundational academic background',
-    'Practical project experience that can be expanded into portfolio evidence',
-    'Technical skills show readiness for entry-level specialization'
+    'Shows curiosity about practical, real-world work',
+    'Has enough interests to compare several college course options',
+    'Can make a better decision by matching subjects, strengths, and preferred work style'
   ],
-  weaknesses: [
-    'Needs more measurable project outcomes and role-specific achievements',
-    'Could strengthen cloud, database, testing, and deployment experience',
-    'Interview examples should be prepared using real project scenarios'
+  concerns: [
+    'May need more exposure to actual college subjects before choosing one course',
+    'Could be influenced by pressure instead of personal strengths and interests',
+    'Needs to compare daily tasks, required skills, and long-term opportunities'
   ],
-  suggestions: [
-    'Add project links, tools used, responsibilities, and measurable results',
-    'Group technical skills by category such as frontend, backend, database, and tools',
-    'Earn one role-aligned certification or complete a capstone deployment'
+  courseSuggestions: [
+    'BS Information Technology',
+    'BS Computer Science',
+    'BS Information Systems',
+    'BS Business Administration major in Marketing Management',
+    'BS Psychology'
   ],
-  interviewAdvice: [
-    'Prepare STAR answers for teamwork, debugging, deadlines, and learning new tools',
-    'Practice explaining each project architecture, tradeoffs, and challenges',
-    'Review fundamentals in programming, databases, APIs, Git, and problem solving'
+  explorationAdvice: [
+    'Interview one student or graduate from each course you are considering',
+    'Watch beginner lectures or course previews before deciding',
+    'Try one small project or activity connected to your top two choices'
   ],
   recommendedJobs: [
-    'Junior Web Developer',
-    'Frontend Developer',
-    'QA Tester',
-    'IT Support Specialist',
-    'Junior Systems Analyst'
+    'Software Developer',
+    'Business Analyst',
+    'UI/UX Designer',
+    'Digital Marketing Specialist',
+    'Guidance or HR Professional'
   ],
   roadmap: [
-    'Month 1: Polish resume, GitHub, LinkedIn, and portfolio project descriptions',
-    'Months 2-3: Build and deploy one full-stack project with authentication and database features',
-    'Months 4-6: Apply to internships or junior roles while practicing interviews weekly'
+    'Week 1: Rank your favorite subjects, hobbies, strengths, and non-negotiables',
+    'Weeks 2-3: Compare course curricula, tuition requirements, and possible careers',
+    'Week 4: Choose a first-choice and backup course, then plan skills to try before enrollment'
   ]
 };
 

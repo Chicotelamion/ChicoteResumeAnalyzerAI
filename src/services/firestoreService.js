@@ -112,9 +112,9 @@ export async function saveResumeProfile(userId, profile) {
         ...profile,
         createdAt: serverTimestamp()
       }),
-      'Saving resume profile'
+      'Saving discovery profile'
     ).catch((error) => {
-      console.warn('Firestore resume sync failed, local profile already saved.', error);
+      console.warn('Firestore discovery profile sync failed, local profile already saved.', error);
     });
 
   return savedLocalProfile.id;
@@ -123,7 +123,7 @@ export async function saveResumeProfile(userId, profile) {
 export async function getLatestResumeProfile(userId) {
   try {
     const q = query(collection(db, 'resume_profiles'), where('userId', '==', userId));
-    const snapshot = await withTimeout(getDocs(q), 'Loading latest resume profile');
+    const snapshot = await withTimeout(getDocs(q), 'Loading latest discovery profile');
 
     if (snapshot.empty) {
       const localRecords = getLocalRecordsByUser(LOCAL_KEYS.resumeProfiles, userId);
@@ -133,7 +133,7 @@ export async function getLatestResumeProfile(userId) {
     const records = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
     return sortNewestFirst(records, 'createdAt')[0];
   } catch (error) {
-    console.warn('Firestore resume load failed, using local fallback.', error);
+    console.warn('Firestore discovery profile load failed, using local fallback.', error);
     const localRecords = getLocalRecordsByUser(LOCAL_KEYS.resumeProfiles, userId);
     return sortNewestFirst(localRecords, 'createdAt')[0] || null;
   }
@@ -142,11 +142,11 @@ export async function getLatestResumeProfile(userId) {
 export async function getResumeProfiles(userId) {
   try {
     const q = query(collection(db, 'resume_profiles'), where('userId', '==', userId));
-    const snapshot = await withTimeout(getDocs(q), 'Loading resume profiles');
+    const snapshot = await withTimeout(getDocs(q), 'Loading discovery profiles');
     const records = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
     return sortNewestFirst(records, 'createdAt');
   } catch (error) {
-    console.warn('Firestore resume list failed, using local fallback.', error);
+    console.warn('Firestore discovery profile list failed, using local fallback.', error);
     const localRecords = getLocalRecordsByUser(LOCAL_KEYS.resumeProfiles, userId);
     return sortNewestFirst(localRecords, 'createdAt');
   }
@@ -186,71 +186,3 @@ export async function getAIAnalysisHistory(userId) {
     return sortNewestFirst(localRecords, 'analyzedAt');
   }
 }
-
-/*
-  Legacy Firebase-only implementations were replaced with Firebase-first,
-  local-fallback functions above so the academic demo remains usable even when
-  Cloud Firestore is not enabled, blocked by rules, or unreachable on campus Wi-Fi.
-*/
-/*
-export async function createUserDocument({ uid, fullname, email }) {
-  await withTimeout(
-    setDoc(doc(db, 'users', uid), {
-      uid,
-      fullname,
-      email,
-      createdAt: serverTimestamp()
-    }),
-    'Creating user record'
-  );
-}
-
-export async function saveResumeProfile(userId, profile) {
-  const docRef = await withTimeout(
-    addDoc(collection(db, 'resume_profiles'), {
-      userId,
-      ...profile,
-      createdAt: serverTimestamp()
-    }),
-    'Saving resume profile'
-  );
-
-  return docRef.id;
-}
-
-export async function getLatestResumeProfile(userId) {
-  const q = query(collection(db, 'resume_profiles'), where('userId', '==', userId));
-  const snapshot = await withTimeout(getDocs(q), 'Loading latest resume profile');
-
-  if (snapshot.empty) return null;
-  const records = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
-  return sortNewestFirst(records, 'createdAt')[0];
-}
-
-export async function getResumeProfiles(userId) {
-  const q = query(collection(db, 'resume_profiles'), where('userId', '==', userId));
-  const snapshot = await withTimeout(getDocs(q), 'Loading resume profiles');
-  const records = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
-  return sortNewestFirst(records, 'createdAt');
-}
-
-export async function saveAIAnalysis(userId, analysis) {
-  const docRef = await withTimeout(
-    addDoc(collection(db, 'ai_analysis'), {
-      userId,
-      ...analysis,
-      analyzedAt: serverTimestamp()
-    }),
-    'Saving AI analysis'
-  );
-
-  return docRef.id;
-}
-
-export async function getAIAnalysisHistory(userId) {
-  const q = query(collection(db, 'ai_analysis'), where('userId', '==', userId));
-  const snapshot = await withTimeout(getDocs(q), 'Loading AI analysis history');
-  const records = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
-  return sortNewestFirst(records, 'analyzedAt');
-}
-*/

@@ -44,18 +44,18 @@ export default function Dashboard() {
   }, [currentUser.uid]);
 
   const latest = history[0];
-  const score = latest?.employabilityScore || 0;
+  const score = latest?.directionScore ?? latest?.employabilityScore ?? 0;
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-marine">Dashboard</p>
-          <h1 className="mt-2 text-3xl font-bold">Hello, {currentUser.displayName || 'future IT professional'}</h1>
-          <p className="mt-2 max-w-2xl text-slate-600">Track your resume profile, AI score, job matches, and previous recommendations.</p>
+          <h1 className="mt-2 text-3xl font-bold">Hello, {currentUser.displayName || 'future college student'}</h1>
+          <p className="mt-2 max-w-2xl text-slate-600">Track your discovery profile, course suggestions, possible career paths, and previous AI guidance.</p>
         </div>
         <Link className="btn-primary" to="/resume">
-          Update Resume
+          Update Profile
           <ArrowRight size={18} />
         </Link>
       </div>
@@ -73,7 +73,7 @@ export default function Dashboard() {
           <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             <div className="card p-5">
               <div className="mb-4 flex items-center justify-between">
-                <span className="text-sm font-semibold text-slate-500">Employability</span>
+                <span className="text-sm font-semibold text-slate-500">Direction Clarity</span>
                 <Sparkles className="text-marine" size={22} />
               </div>
               <p className="text-4xl font-bold text-ink">{score}%</p>
@@ -83,11 +83,11 @@ export default function Dashboard() {
             </div>
             <div className="card p-5">
               <div className="mb-4 flex items-center justify-between">
-                <span className="text-sm font-semibold text-slate-500">Resume Profiles</span>
+                <span className="text-sm font-semibold text-slate-500">Discovery Profiles</span>
                 <FileText className="text-coral" size={22} />
               </div>
               <p className="text-4xl font-bold text-ink">{profile ? 1 : 0}</p>
-              <p className="mt-2 text-sm text-slate-600">{profile ? profile.degree || profile.course || 'Profile saved' : 'No profile yet'}</p>
+              <p className="mt-2 text-sm text-slate-600">{profile ? profile.courseInterest || profile.gradeLevel || 'Profile saved' : 'No profile yet'}</p>
             </div>
             <div className="card p-5">
               <div className="mb-4 flex items-center justify-between">
@@ -95,15 +95,15 @@ export default function Dashboard() {
                 <Clock3 className="text-marine" size={22} />
               </div>
               <p className="text-4xl font-bold text-ink">{history.length}</p>
-              <p className="mt-2 text-sm text-slate-600">Saved AI reports</p>
+              <p className="mt-2 text-sm text-slate-600">Saved guidance reports</p>
             </div>
             <div className="card p-5">
               <div className="mb-4 flex items-center justify-between">
-                <span className="text-sm font-semibold text-slate-500">Top Match</span>
+                <span className="text-sm font-semibold text-slate-500">Top Course</span>
                 <Target className="text-mint" size={22} />
               </div>
-              <p className="text-xl font-bold text-ink">{latest?.recommendedJobs?.[0] || 'Analyze first'}</p>
-              <p className="mt-2 text-sm text-slate-600">Recommended IT role</p>
+              <p className="text-xl font-bold text-ink">{latest?.courseSuggestions?.[0] || 'Analyze first'}</p>
+              <p className="mt-2 text-sm text-slate-600">Recommended college course</p>
             </div>
           </section>
 
@@ -112,11 +112,11 @@ export default function Dashboard() {
               <h2 className="text-xl font-bold">Next best actions</h2>
               <div className="mt-5 grid gap-3">
                 <Link className="flex items-center justify-between rounded-lg border border-slate-200 p-4 transition hover:bg-slate-50" to="/resume">
-                  <span className="font-semibold">Complete or update resume profile</span>
+                  <span className="font-semibold">Complete or update discovery profile</span>
                   <ArrowRight size={18} />
                 </Link>
                 <Link className="flex items-center justify-between rounded-lg border border-slate-200 p-4 transition hover:bg-slate-50" to="/analyze">
-                  <span className="font-semibold">Run AI career analysis</span>
+                  <span className="font-semibold">Get course and career guidance</span>
                   <ArrowRight size={18} />
                 </Link>
                 <Link className="flex items-center justify-between rounded-lg border border-slate-200 p-4 transition hover:bg-slate-50" to="/history">
@@ -127,16 +127,16 @@ export default function Dashboard() {
             </div>
 
             <div className="card p-6">
-              <h2 className="text-xl font-bold">Latest recommendations</h2>
+              <h2 className="text-xl font-bold">Latest course recommendations</h2>
               {latest ? (
                 <ul className="mt-5 space-y-3">
-                  {latest.recommendedJobs?.map((job) => (
-                    <li className="rounded-lg bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700" key={job}>{job}</li>
+                  {(latest.courseSuggestions || latest.recommendedJobs || []).map((course) => (
+                    <li className="rounded-lg bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700" key={course}>{course}</li>
                   ))}
                 </ul>
               ) : (
                 <div className="mt-5 rounded-lg bg-slate-50 p-4 text-sm text-slate-600">
-                  Your job recommendations will appear here after your first AI analysis.
+                  Your course recommendations will appear here after your first AI guidance report.
                 </div>
               )}
             </div>

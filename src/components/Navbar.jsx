@@ -5,8 +5,8 @@ import { useAuth } from '../contexts/AuthContext.jsx';
 
 const privateLinks = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/resume', label: 'Resume', icon: FileText },
-  { to: '/analyze', label: 'Analyze', icon: Sparkles },
+  { to: '/resume', label: 'Profile', icon: FileText },
+  { to: '/analyze', label: 'Guidance', icon: Sparkles },
   { to: '/history', label: 'History', icon: History }
 ];
 

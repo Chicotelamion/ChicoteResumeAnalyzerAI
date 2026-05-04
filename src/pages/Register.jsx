@@ -35,7 +35,7 @@ export default function Register() {
             <UserPlus size={24} />
           </div>
           <h1 className="text-2xl font-bold">Create account</h1>
-          <p className="mt-1 text-sm text-slate-600">Register to build your resume profile and save AI analysis history.</p>
+          <p className="mt-1 text-sm text-slate-600">Register to build a student discovery profile and save AI guidance history.</p>
         </div>
 
         {error && <div className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}

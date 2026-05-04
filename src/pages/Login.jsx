@@ -74,7 +74,7 @@ export default function Login() {
             <LogIn size={24} />
           </div>
           <h1 className="text-2xl font-bold">Welcome back</h1>
-          <p className="mt-1 text-sm text-slate-600">Login to continue your career analysis workflow.</p>
+          <p className="mt-1 text-sm text-slate-600">Login to continue your college course and career discovery workflow.</p>
         </div>
 
         {error && <div className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}

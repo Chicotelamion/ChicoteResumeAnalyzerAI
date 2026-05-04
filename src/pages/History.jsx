@@ -4,6 +4,8 @@ import { useAuth } from '../contexts/AuthContext.jsx';
 import { getAIAnalysisHistory } from '../services/firestoreService.js';
 
 function formatDate(timestamp) {
+  if (!timestamp) return 'Recently saved';
+  if (typeof timestamp === 'string') return new Date(timestamp).toLocaleString();
   if (!timestamp?.toDate) return 'Recently saved';
   return timestamp.toDate().toLocaleString();
 }
@@ -44,8 +46,8 @@ export default function History() {
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-7">
         <p className="text-sm font-semibold uppercase tracking-wide text-marine">History</p>
-        <h1 className="mt-2 text-3xl font-bold">Saved AI analyses</h1>
-        <p className="mt-2 text-slate-600">Review previous employability scores, job role matches, and roadmap advice.</p>
+        <h1 className="mt-2 text-3xl font-bold">Saved AI guidance</h1>
+        <p className="mt-2 text-slate-600">Review previous direction scores, course suggestions, career paths, and roadmap advice.</p>
       </div>
 
       {loading ? (
@@ -53,7 +55,7 @@ export default function History() {
       ) : error ? (
         <div className="card border-amber-200 bg-amber-50 p-6 text-sm text-amber-800">{error}</div>
       ) : history.length === 0 ? (
-        <div className="card p-6 text-slate-600">No AI analyses have been saved yet.</div>
+        <div className="card p-6 text-slate-600">No AI guidance reports have been saved yet.</div>
       ) : (
         <div className="space-y-5">
           {history.map((item) => (
@@ -64,7 +66,7 @@ export default function History() {
                     <Sparkles size={24} />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold">Employability Score: {item.employabilityScore}%</h2>
+                    <h2 className="text-lg font-bold">Direction Score: {item.directionScore ?? item.employabilityScore}%</h2>
                     <p className="mt-1 flex items-center gap-2 text-sm text-slate-500">
                       <CalendarClock size={16} />
                       {formatDate(item.analyzedAt)}
@@ -72,16 +74,16 @@ export default function History() {
                   </div>
                 </div>
                 <div className="h-3 w-full rounded-full bg-slate-100 md:w-56">
-                  <div className="h-3 rounded-full bg-mint" style={{ width: `${item.employabilityScore || 0}%` }} />
+                  <div className="h-3 rounded-full bg-mint" style={{ width: `${item.directionScore ?? item.employabilityScore ?? 0}%` }} />
                 </div>
               </div>
 
               <div className="grid gap-5 p-5 lg:grid-cols-3">
                 <div>
-                  <h3 className="mb-2 font-bold">Top Roles</h3>
+                  <h3 className="mb-2 font-bold">Suggested Courses</h3>
                   <ul className="space-y-2">
-                    {item.recommendedJobs?.map((job) => (
-                      <li className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700" key={job}>{job}</li>
+                    {(item.courseSuggestions || item.recommendedJobs || []).map((course) => (
+                      <li className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700" key={course}>{course}</li>
                     ))}
                   </ul>
                 </div>
@@ -94,7 +96,7 @@ export default function History() {
                   </ul>
                 </div>
                 <div>
-                  <h3 className="mb-2 font-bold">Roadmap</h3>
+                  <h3 className="mb-2 font-bold">Decision Roadmap</h3>
                   <ul className="space-y-2">
                     {item.roadmap?.slice(0, 3).map((step) => (
                       <li className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700" key={step}>{step}</li>

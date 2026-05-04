@@ -1,6 +1,6 @@
 # CareerPath AI
 
-CareerPath AI is a React, Firebase, and OpenAI academic final project for resume analysis and IT job recommendation.
+CareerPath AI is a React, Firebase, and OpenAI academic final project for undecided students choosing a college course and future career direction.
 
 ## Setup
 
@@ -23,7 +23,7 @@ CareerPath AI is a React, Firebase, and OpenAI academic final project for resume
 ## Firebase Collections
 
 - `users`
-- `resume_profiles`
+- `resume_profiles` stores student discovery profiles
 - `ai_analysis`
 
 For production, proxy AI requests through a secure backend or Firebase Cloud Function so your API key is not exposed in browser code.

@@ -41,7 +41,7 @@ export default function AnalyzeCareer() {
         setProfile(latest);
       } catch (err) {
         if (!mounted) return;
-        setError(err.message || 'Unable to load your latest resume profile.');
+        setError(err.message || 'Unable to load your latest discovery profile.');
         setProfile(null);
       } finally {
         if (mounted) setLoadingProfile(false);
@@ -62,11 +62,11 @@ export default function AnalyzeCareer() {
     try {
       const result = await analyzeCareerProfile(profile);
       const normalized = {
-        employabilityScore: Number(result.employabilityScore) || 0,
+        directionScore: Number(result.directionScore ?? result.employabilityScore) || 0,
         strengths: result.strengths || [],
-        weaknesses: result.weaknesses || [],
-        suggestions: result.suggestions || [],
-        interviewAdvice: result.interviewAdvice || [],
+        concerns: result.concerns || result.weaknesses || [],
+        courseSuggestions: result.courseSuggestions || result.suggestions || [],
+        explorationAdvice: result.explorationAdvice || result.interviewAdvice || [],
         recommendedJobs: result.recommendedJobs || [],
         roadmap: result.roadmap || []
       };
@@ -83,26 +83,26 @@ export default function AnalyzeCareer() {
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-7 flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-marine">AI Analysis</p>
-          <h1 className="mt-2 text-3xl font-bold">Analyze your career readiness</h1>
-          <p className="mt-2 max-w-2xl text-slate-600">Generate an employability score, skill gaps, interview advice, IT job roles, and a career roadmap.</p>
+          <p className="text-sm font-semibold uppercase tracking-wide text-marine">AI Guidance</p>
+          <h1 className="mt-2 text-3xl font-bold">Find course and career direction</h1>
+          <p className="mt-2 max-w-2xl text-slate-600">Generate college course suggestions, possible career paths, strengths, concerns, and an exploration roadmap.</p>
         </div>
         <button className="btn-primary" onClick={handleAnalyze} disabled={!profile || analyzing || loadingProfile}>
           {analyzing ? <RefreshCw className="animate-spin" size={18} /> : <Sparkles size={18} />}
-          {analyzing ? 'Analyzing...' : 'Analyze My Career'}
+          {analyzing ? 'Analyzing...' : 'Guide My Path'}
         </button>
       </div>
 
-      {loadingProfile && <div className="card p-6 text-slate-600">Loading latest resume profile...</div>}
+      {loadingProfile && <div className="card p-6 text-slate-600">Loading latest discovery profile...</div>}
 
       {!loadingProfile && !profile && (
         <div className="card p-6">
           <div className="flex items-start gap-3">
             <TriangleAlert className="mt-1 text-coral" size={22} />
             <div>
-              <h2 className="text-lg font-bold">No resume profile found</h2>
-              <p className="mt-1 text-slate-600">Create a resume profile before running AI analysis.</p>
-              <Link className="btn-primary mt-4" to="/resume">Create Resume Profile</Link>
+              <h2 className="text-lg font-bold">No discovery profile found</h2>
+              <p className="mt-1 text-slate-600">Create a student discovery profile before running AI guidance.</p>
+              <Link className="btn-primary mt-4" to="/resume">Create Discovery Profile</Link>
             </div>
           </div>
         </div>
@@ -116,29 +116,30 @@ export default function AnalyzeCareer() {
               <h2 className="text-lg font-bold">Current profile</h2>
               <div className="mt-4 space-y-3 text-sm text-slate-700">
               <p><span className="font-semibold">Name:</span> {profile.fullname || 'Not provided'}</p>
-              <p><span className="font-semibold">Degree:</span> {profile.degree || 'Not provided'}</p>
-              <p><span className="font-semibold">Interest:</span> {profile.careerInterest || 'Not provided'}</p>
+              <p><span className="font-semibold">Grade level:</span> {profile.gradeLevel || 'Not provided'}</p>
+              <p><span className="font-semibold">Course ideas:</span> {profile.courseInterest || 'Not provided'}</p>
+              <p><span className="font-semibold">Career curiosity:</span> {profile.careerInterest || 'Not provided'}</p>
               {profile.resumeFileName && (
-                <p><span className="font-semibold">Resume file:</span> {profile.resumeFileName}</p>
+                <p><span className="font-semibold">Uploaded document:</span> {profile.resumeFileName}</p>
               )}
               {profile.resumeFileUrl && (
                 <a className="font-semibold text-marine" href={profile.resumeFileUrl} target="_blank" rel="noreferrer">
-                  View uploaded resume
+                  View uploaded document
                 </a>
               )}
             </div>
           </div>
 
           <div className="card p-5">
-            <h2 className="text-lg font-bold">Skills snapshot</h2>
+            <h2 className="text-lg font-bold">Interest snapshot</h2>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               <div className="rounded-lg bg-slate-50 p-4">
-                <p className="text-sm font-semibold text-slate-500">Technical skills</p>
-                <p className="mt-2 text-sm leading-6 text-slate-700">{profile.technicalSkills || 'Not provided'}</p>
+                <p className="text-sm font-semibold text-slate-500">Favorite subjects</p>
+                <p className="mt-2 text-sm leading-6 text-slate-700">{profile.favoriteSubjects || 'Not provided'}</p>
               </div>
               <div className="rounded-lg bg-slate-50 p-4">
-                <p className="text-sm font-semibold text-slate-500">Programming languages</p>
-                <p className="mt-2 text-sm leading-6 text-slate-700">{profile.programmingLanguages || 'Not provided'}</p>
+                <p className="text-sm font-semibold text-slate-500">Strengths and work style</p>
+                <p className="mt-2 text-sm leading-6 text-slate-700">{profile.strengths || profile.workStyle || 'Not provided'}</p>
               </div>
             </div>
           </div>
@@ -150,16 +151,16 @@ export default function AnalyzeCareer() {
           <div className="card p-6">
             <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
               <div>
-                <p className="text-sm font-semibold text-slate-500">Employability Score</p>
-                <p className="mt-1 text-5xl font-bold text-marine">{analysis.employabilityScore}%</p>
+                <p className="text-sm font-semibold text-slate-500">Direction Clarity Score</p>
+                <p className="mt-1 text-5xl font-bold text-marine">{analysis.directionScore}%</p>
               </div>
               <div className="w-full max-w-xl">
                 <div className="mb-2 flex justify-between text-sm font-semibold text-slate-600">
-                  <span>Entry-level readiness</span>
-                  <span>{analysis.employabilityScore}/100</span>
+                  <span>Course and career direction</span>
+                  <span>{analysis.directionScore}/100</span>
                 </div>
                 <div className="h-4 rounded-full bg-slate-100">
-                  <div className="h-4 rounded-full bg-mint" style={{ width: `${analysis.employabilityScore}%` }} />
+                  <div className="h-4 rounded-full bg-mint" style={{ width: `${analysis.directionScore}%` }} />
                 </div>
               </div>
             </div>
@@ -167,14 +168,14 @@ export default function AnalyzeCareer() {
 
           <div className="grid gap-5 lg:grid-cols-2">
             <ListCard title="Strengths" items={analysis.strengths} icon={CheckCircle2} />
-            <ListCard title="Weaknesses and Missing Skills" items={analysis.weaknesses} icon={TriangleAlert} />
-            <ListCard title="Resume Improvement Suggestions" items={analysis.suggestions} icon={Lightbulb} />
-            <ListCard title="Interview Readiness Advice" items={analysis.interviewAdvice} icon={BrainCircuit} />
+            <ListCard title="Concerns and Decision Conflicts" items={analysis.concerns} icon={TriangleAlert} />
+            <ListCard title="Recommended College Courses" items={analysis.courseSuggestions} icon={Lightbulb} />
+            <ListCard title="Exploration Advice" items={analysis.explorationAdvice} icon={BrainCircuit} />
           </div>
 
           <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
-            <ListCard title="Top 5 Recommended IT Jobs" items={analysis.recommendedJobs} icon={Sparkles} />
-            <ListCard title="Career Growth Roadmap" items={analysis.roadmap} icon={Route} />
+            <ListCard title="Possible Future Career Paths" items={analysis.recommendedJobs} icon={Sparkles} />
+            <ListCard title="College Decision Roadmap" items={analysis.roadmap} icon={Route} />
           </div>
         </section>
       )}

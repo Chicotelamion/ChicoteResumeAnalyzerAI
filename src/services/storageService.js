@@ -7,7 +7,7 @@ function withTimeout(promise, action, timeoutMs = 12000) {
     timeoutId = setTimeout(() => {
       reject(
         new Error(
-          `${action} timed out. The profile can still be saved without the optional resume file.`
+          `${action} timed out. The profile can still be saved without the optional uploaded document.`
         )
       );
     }, timeoutMs);
@@ -21,6 +21,6 @@ export async function uploadResumeFile(userId, file) {
 
   const filePath = `resumes/${userId}/${Date.now()}-${file.name}`;
   const storageRef = ref(storage, filePath);
-  await withTimeout(uploadBytes(storageRef, file), 'Uploading resume file');
-  return withTimeout(getDownloadURL(storageRef), 'Getting resume file URL');
+  await withTimeout(uploadBytes(storageRef, file), 'Uploading document');
+  return withTimeout(getDownloadURL(storageRef), 'Getting document URL');
 }
