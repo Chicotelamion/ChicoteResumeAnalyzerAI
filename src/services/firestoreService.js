@@ -74,6 +74,33 @@ function sortNewestFirst(records, fieldName) {
   });
 }
 
+function getUserDoc(uid) {
+  return doc(db, 'users', uid);
+}
+
+function getUserResumeProfilesCollection(uid) {
+  return collection(getUserDoc(uid), 'resume_profiles');
+}
+
+function getUserAIAnalysisCollection(uid) {
+  return collection(getUserDoc(uid), 'ai_analysis');
+}
+
+async function getUserSubcollectionRecords(uid, collectionName, action) {
+  const snapshot = await withTimeout(
+    getDocs(collection(getUserDoc(uid), collectionName)),
+    action
+  );
+
+  return snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
+}
+
+async function getLegacyRecords(collectionName, userId, action) {
+  const q = query(collection(db, collectionName), where('userId', '==', userId));
+  const snapshot = await withTimeout(getDocs(q), action);
+  return snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
+}
+
 export async function createUserDocument({ uid, fullname, email }) {
   const userRecord = {
     uid,
@@ -84,7 +111,7 @@ export async function createUserDocument({ uid, fullname, email }) {
 
   try {
     await withTimeout(
-      setDoc(doc(db, 'users', uid), {
+      setDoc(getUserDoc(uid), {
         uid,
         fullname,
         email,
@@ -99,38 +126,51 @@ export async function createUserDocument({ uid, fullname, email }) {
 }
 
 export async function saveResumeProfile(userId, profile) {
-  const localProfile = {
-    userId,
-    ...profile,
-    createdAt: new Date().toISOString()
-  };
-  const savedLocalProfile = saveLocalRecord(LOCAL_KEYS.resumeProfiles, localProfile);
-
-  withTimeout(
-    addDoc(collection(db, 'resume_profiles'), {
+  try {
+    const createdAt = new Date().toISOString();
+    const docRef = await withTimeout(
+      addDoc(getUserResumeProfilesCollection(userId), {
         userId,
         ...profile,
         createdAt: serverTimestamp()
       }),
       'Saving discovery profile'
-    ).catch((error) => {
-      console.warn('Firestore discovery profile sync failed, local profile already saved.', error);
+    );
+
+    saveLocalRecord(LOCAL_KEYS.resumeProfiles, {
+      userId,
+      ...profile,
+      createdAt
     });
 
-  return savedLocalProfile.id;
+    return docRef.id;
+  } catch (error) {
+    console.warn('Firestore discovery profile save failed.', error);
+    throw error;
+  }
 }
 
 export async function getLatestResumeProfile(userId) {
   try {
-    const q = query(collection(db, 'resume_profiles'), where('userId', '==', userId));
-    const snapshot = await withTimeout(getDocs(q), 'Loading latest discovery profile');
+    let records = await getUserSubcollectionRecords(
+      userId,
+      'resume_profiles',
+      'Loading latest discovery profile'
+    );
 
-    if (snapshot.empty) {
+    if (records.length === 0) {
+      records = await getLegacyRecords(
+        'resume_profiles',
+        userId,
+        'Loading latest discovery profile from legacy records'
+      );
+    }
+
+    if (records.length === 0) {
       const localRecords = getLocalRecordsByUser(LOCAL_KEYS.resumeProfiles, userId);
       return sortNewestFirst(localRecords, 'createdAt')[0] || null;
     }
 
-    const records = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
     return sortNewestFirst(records, 'createdAt')[0];
   } catch (error) {
     console.warn('Firestore discovery profile load failed, using local fallback.', error);
@@ -141,9 +181,20 @@ export async function getLatestResumeProfile(userId) {
 
 export async function getResumeProfiles(userId) {
   try {
-    const q = query(collection(db, 'resume_profiles'), where('userId', '==', userId));
-    const snapshot = await withTimeout(getDocs(q), 'Loading discovery profiles');
-    const records = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
+    let records = await getUserSubcollectionRecords(
+      userId,
+      'resume_profiles',
+      'Loading discovery profiles'
+    );
+
+    if (records.length === 0) {
+      records = await getLegacyRecords(
+        'resume_profiles',
+        userId,
+        'Loading discovery profiles from legacy records'
+      );
+    }
+
     return sortNewestFirst(records, 'createdAt');
   } catch (error) {
     console.warn('Firestore discovery profile list failed, using local fallback.', error);
@@ -153,32 +204,46 @@ export async function getResumeProfiles(userId) {
 }
 
 export async function saveAIAnalysis(userId, analysis) {
-  const localAnalysis = {
-    userId,
-    ...analysis,
-    analyzedAt: new Date().toISOString()
-  };
-  const savedLocalAnalysis = saveLocalRecord(LOCAL_KEYS.aiAnalysis, localAnalysis);
-
-  withTimeout(
-    addDoc(collection(db, 'ai_analysis'), {
+  try {
+    const analyzedAt = new Date().toISOString();
+    const docRef = await withTimeout(
+      addDoc(getUserAIAnalysisCollection(userId), {
         userId,
         ...analysis,
         analyzedAt: serverTimestamp()
       }),
       'Saving AI analysis'
-    ).catch((error) => {
-      console.warn('Firestore analysis sync failed, local analysis already saved.', error);
+    );
+
+    saveLocalRecord(LOCAL_KEYS.aiAnalysis, {
+      userId,
+      ...analysis,
+      analyzedAt
     });
 
-  return savedLocalAnalysis.id;
+    return docRef.id;
+  } catch (error) {
+    console.warn('Firestore analysis save failed.', error);
+    throw error;
+  }
 }
 
 export async function getAIAnalysisHistory(userId) {
   try {
-    const q = query(collection(db, 'ai_analysis'), where('userId', '==', userId));
-    const snapshot = await withTimeout(getDocs(q), 'Loading AI analysis history');
-    const records = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
+    let records = await getUserSubcollectionRecords(
+      userId,
+      'ai_analysis',
+      'Loading AI analysis history'
+    );
+
+    if (records.length === 0) {
+      records = await getLegacyRecords(
+        'ai_analysis',
+        userId,
+        'Loading AI analysis history from legacy records'
+      );
+    }
+
     return sortNewestFirst(records, 'analyzedAt');
   } catch (error) {
     console.warn('Firestore analysis history failed, using local fallback.', error);
